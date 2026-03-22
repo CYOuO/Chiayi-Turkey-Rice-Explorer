@@ -92,9 +92,8 @@ class HomePage extends StatelessWidget {
 
     // 建立首頁button物件
     var startButton = ElevatedButton(
-      onPressed: () =>Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantInfoPage())),
+      onPressed: () =>Navigator.push(context, MaterialPageRoute(builder: (context) => const RestaurantInfoPage())),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white.withValues(alpha: 0.8),
         foregroundColor: Colors.brown,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(
@@ -108,13 +107,12 @@ class HomePage extends StatelessWidget {
               gradient: LinearGradient(
                 colors: states.contains(WidgetState.pressed)
                     ? [
-                        Color.fromARGB(200, 255, 220, 160), // 按下變深
-                        Colors.white.withValues(alpha: 0.6),
+                        const Color.fromARGB(200, 255, 220, 160), // 按下狀態漸層
+                        const Color.fromARGB(150, 255, 255, 255),
                       ]
                     : [
-                        const Color.fromARGB(255, 246, 196, 196)
-                            .withValues(alpha: 0.95), // 一般狀態漸層
-                        Color.fromARGB(200, 255, 220, 160),
+                        const Color.fromARGB(240, 246, 196, 196), // 一般狀態漸層
+                        const Color.fromARGB(200, 255, 220, 160),
                       ],
               ),
             ),

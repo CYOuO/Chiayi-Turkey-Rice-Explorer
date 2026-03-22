@@ -54,7 +54,16 @@ flutter:
   assets:
     - assets/flutter.png
     - assets/home_background.JPG
-
+    - assets/01minzu.jpg
+    - assets/02pensuei.jpg
+    - assets/03kuaiting.jpg
+    - assets/04hong.jpg
+    - assets/05sister.jpg
+    - assets/06cy.jpg
+    - assets/07chen.jpg
+    - assets/08king.jpg
+    - assets/09lou.jpg
+    - assets/10tong.jpg
   fonts:
     - family: TWSung
       fonts:
