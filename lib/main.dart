@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'restaurant_info_page.dart';
 
 void main() => runApp(const App());
 
@@ -7,11 +8,25 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return  MaterialApp( 
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+      useMaterial3: true,
+      fontFamily: 'TWSung',),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     // 建立標題物件
     var mainTitle = const Text(
       'Turkey Rice Explorer',
       style: TextStyle(
-        fontFamily: 'TWSung',
         fontSize: 34,
         color: Color.fromARGB(255, 255, 255, 255),
         fontWeight: FontWeight.bold,
@@ -32,7 +47,6 @@ class App extends StatelessWidget {
     var subTitle = const Text(
       'A Local\'s Guide to Delicious Food',
       style: TextStyle(
-          fontFamily: 'TWSung',
           fontSize: 16,
           color: Color.fromARGB(255, 255, 255, 255),
           fontWeight: FontWeight.bold,
@@ -78,9 +92,7 @@ class App extends StatelessWidget {
 
     // 建立首頁button物件
     var startButton = ElevatedButton(
-      onPressed: () {
-        // 在這裡添加按鈕的功能
-      },
+      onPressed: () =>Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantInfoPage())),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white.withValues(alpha: 0.8),
         foregroundColor: Colors.brown,
@@ -113,7 +125,6 @@ class App extends StatelessWidget {
       child: const Text(
         '開始探索',
         style: TextStyle(
-          fontFamily: 'TWSung',
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -154,11 +165,8 @@ class App extends StatelessWidget {
     );
 
     // 建立app物件
-    var app = MaterialApp(
-      home: Scaffold(
-        body: appBody,
-      ),
-      debugShowCheckedModeBanner: false,
+    final app = Scaffold(
+      body: appBody,
     );
     return app;
   }
@@ -174,7 +182,6 @@ class App extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(
-          fontFamily: 'TWSung',
           color: Colors.white,
           fontSize: 15,
         ),
