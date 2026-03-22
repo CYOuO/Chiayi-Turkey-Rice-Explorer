@@ -68,14 +68,57 @@ class App extends StatelessWidget {
     var tags = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildTag('📍 嘉義市'),
+        _buildTag('📍 嘉義市區'),
         const SizedBox(width: 8),
-        _buildTag('⭐ 在地美食'),
+        _buildTag('⭐在地美食'),
         const SizedBox(width: 8),
         _buildTag('🍗 火雞肉飯'),
       ],
     );
 
+    // 建立首頁button物件
+    var startButton = ElevatedButton(
+      onPressed: () {
+        // 在這裡添加按鈕的功能
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: 0.8),
+        foregroundColor: Colors.brown,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        backgroundBuilder: (context, states, child) {
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              gradient: LinearGradient(
+                colors: states.contains(WidgetState.pressed)
+                    ? [
+                        Color.fromARGB(200, 255, 220, 160), // 按下變深
+                        Colors.white.withValues(alpha: 0.6),
+                      ]
+                    : [
+                        const Color.fromARGB(255, 246, 196, 196)
+                            .withValues(alpha: 0.95), // 一般狀態漸層
+                        Color.fromARGB(200, 255, 220, 160),
+                      ],
+              ),
+            ),
+            child: child,
+          );
+        },
+      ),
+      child: const Text(
+        '開始探索',
+        style: TextStyle(
+          fontFamily: 'TWSung',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
 
     // 建立appBody物件
     var appBody = Stack(
@@ -88,14 +131,22 @@ class App extends StatelessWidget {
             children: [mainTitle, subTitle],
           ),
         ),
+        
         OrientationBuilder(
           builder: (context, orientation) {
             return Align(
               alignment: Alignment(
                 0,
-                orientation == Orientation.portrait ? 0.25 : 0.45,
+                orientation == Orientation.portrait ? 0.25 : 0.75,
               ),
-              child: tags,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(child: tags),
+                  const SizedBox(height: 20),
+                  startButton,
+                ],
+              ),
             );
           },
         ),
