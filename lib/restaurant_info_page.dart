@@ -125,10 +125,23 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 店名
-                Text(
-                  selectedShop.name,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      selectedShop.name,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      selectedShop.price,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey, //
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 const Divider(),
