@@ -10,15 +10,31 @@ class RestaurantInfoPage extends StatefulWidget {
 
 class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
   late Restaurant selectedShop;
+  List<Restaurant> filteredRestaurants = []; // 搜尋用：用於搜尋過濾的店家列表
+  final searchController = TextEditingController(); // 搜尋用：搜尋框控制器
   @override
   void initState() {
     super.initState();
     selectedShop = restaurants[0]; // 預設選第一間
+    filteredRestaurants = restaurants; // 搜尋用：預設搜尋結果為全部店家
+  }
+
+  void _search() {
+    // 搜尋用：根據搜尋框內容過濾店家列表
+    setState(() {
+      final keyword = searchController.text;
+      if (keyword.isEmpty) {
+        filteredRestaurants = restaurants;
+      } else {
+        filteredRestaurants =
+            restaurants.where((shop) => shop.name.contains(keyword)).toList();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-// 建立AppBar
+    // 建立AppBar
     final appBar = AppBar(
       title: const Text(
         '店家資訊',
@@ -30,10 +46,44 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       iconTheme: const IconThemeData(
         color: Colors.white, // 將箭頭改為白色
       ),
+      actions: [
+        // 搜尋用：搜尋框
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SizedBox(
+            width: 180,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      hintText: '搜尋...',
+                      hintStyle: TextStyle(color: Colors.white60),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white60),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _search, // ← 按 icon 才搜尋
+                  child: const Icon(Icons.search, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+      ],
     );
 
     var dropdownMenu = DropdownMenu<Restaurant>(
-      initialSelection: restaurants[0],
       expandedInsets: EdgeInsets.zero, // 讓選單寬度撐滿
       label: const Text('請選擇店家'),
       menuStyle: const MenuStyle(
@@ -41,8 +91,11 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
           Color.fromARGB(255, 254, 243, 243), // 下拉選單背景色
         ),
         elevation: WidgetStatePropertyAll(6),
-      ),requestFocusOnTap: true,
-      dropdownMenuEntries: restaurants.map((shop) {
+      ),
+      enableFilter: true,
+      requestFocusOnTap: true,
+      dropdownMenuEntries: filteredRestaurants.map((shop) {
+        // 搜尋用：restaurants 改成 filteredRestaurants
         return DropdownMenuEntry<Restaurant>(
           value: shop,
           label: shop.name,
@@ -152,6 +205,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
         ],
       ),
     );
+
 // 建立App的操作畫面
     var appBody = Column(
       children: [
