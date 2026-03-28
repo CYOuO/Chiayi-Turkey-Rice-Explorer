@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'restaurant_data.dart';
 
 class RestaurantInfoPage extends StatefulWidget {
   const RestaurantInfoPage({Key? key}) : super(key: key);
@@ -8,90 +9,7 @@ class RestaurantInfoPage extends StatefulWidget {
 }
 
 class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
-  final List<Map<String, String>> restaurants = [
-    {
-      'name': '民主雞肉飯',
-      'image': 'assets/01minzu.jpg', 
-      'address': '嘉義市東區民族路149號',
-      'time': '每天10:00–20:40',
-      'description': '假日常常大排長龍的店，但翻桌率很高。\n這家店的火雞肉飯口味獨特，深受當地人喜愛。\n有專屬停車場。',
-      'phone': '05-216-2666',
-    },
-    {
-      'name': '噴水雞肉飯-小雅旗艦店',
-      'image': 'assets/02pensuei.jpg',
-      'address': '嘉義市東區小雅路382號',
-      'time': '每天10:30–20:00',
-      'description': '著名觀光店，但其實非在地人首選。\n有專屬停車場。',
-      'phone': '05-222-2433',
-    },
-    {
-      'name': '檜町雞肉飯',
-      'image': 'assets/03kuaiting.jpg',
-      'address': '嘉義市東區吳鳳北路101號',
-      'time': '11:00-15:00,17:00-20:00(週二、三、四公休)',
-      'description': '裝潢小文青，環境舒適，有焗烤雞肉飯很獨特。',
-      'phone': '05-222-7171',
-    },
-    {
-      'name': '阿宏師火雞肉飯',
-      'image': 'assets/04hong.jpg',
-      'address': '嘉義市東區光華路108號',
-      'time': '每天10:30–20:00',
-      'description': '假日時期常大排長龍，多外地人，且不好停車。',
-      'phone': '05-223-3467',
-    },
-    {
-      'name': '嘉義體育館姊妹火雞肉飯',
-      'image': 'assets/05sister.jpg',
-      'address': '嘉義市東區垂楊路1號',
-      'time': '06:00-14:00(週三公休)',
-      'description': '創業於西元1987年，是許多嘉義人從小吃到大的老店。',
-      'phone': '05-216-3755',
-    },
-    {
-      'name': '嘉義人火雞肉飯',
-      'image': 'assets/06cy.jpg',
-      'address': '嘉義市東區垂楊路157號',
-      'time': '05:30–14:00',
-      'description': '早期是無名路邊攤起家，經營多年的老店。\n用餐時間人潮不斷，外面大馬路好停車。',
-      'phone': '05-223-1737',
-    },
-    {
-      'name': '陳家美食火雞肉飯',
-      'image': 'assets/07chen.jpg',
-      'address': '嘉義市西區民族路633號',
-      'time': '11:00–04:00(週四公休)',
-      'description': '內用是拋棄式碗筷，評價不高，是某些人的一次店。',
-      'phone': '05-222-2748',
-    },
-    {
-      'name': '圓環火雞大王火雞肉飯',
-      'image': 'assets/08king.jpg',
-      'address': '嘉義市東區民族路108號',
-      'time': '10:30–21:00',
-      'description': '評價感覺中規中矩，路邊有付費停車場。',
-      'phone': '05-277-2233',
-    },
-    {
-      'name': '阿樓師火雞肉飯',
-      'image': 'assets/09lou.jpg',
-      'address': '嘉義市東區吳鳳北路102號',
-      'time': '16:00–00:00',
-      'description': '人氣美食須排隊，附近也有超大停車場。',
-      'phone': '05-228-2738',
-    },
-    {
-      'name': '大同火雞肉飯',
-      'image': 'assets/10tong.jpg',
-      'address': '嘉義市東區民族路113號',
-      'time': '10:00–16:00(週二公休)',
-      'description': '飯粒粒分明，太晚到會蛋就沒有了，且是全熟蛋。',
-      'phone': '05-275-5005',
-    }
-  ];
-  late Map<String, String> selectedShop;
-
+  late Restaurant selectedShop;
   @override
   void initState() {
     super.initState();
@@ -114,7 +32,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       ),
     );
 
-    var dropdownMenu = DropdownMenu<Map<String, String>>(
+    var dropdownMenu = DropdownMenu<Restaurant>(
       initialSelection: restaurants[0],
       expandedInsets: EdgeInsets.zero, // 讓選單寬度撐滿
       label: const Text('請選擇店家'),
@@ -125,12 +43,12 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
         elevation: WidgetStatePropertyAll(6),
       ),requestFocusOnTap: true,
       dropdownMenuEntries: restaurants.map((shop) {
-        return DropdownMenuEntry<Map<String, String>>(
+        return DropdownMenuEntry<Restaurant>(
           value: shop,
-          label: shop['name']!,
+          label: shop.name,
         );
       }).toList(),
-      onSelected: (Map<String, String>? value) {
+      onSelected: (Restaurant? value) {
         if (!mounted) return;
         setState(() {
           if (value != null) selectedShop = value;
@@ -143,7 +61,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            selectedShop['image']!,
+            selectedShop.image,
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
@@ -155,7 +73,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
               children: [
                 // 店名
                 Text(
-                  selectedShop['name']!,
+                  selectedShop.name,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
@@ -174,7 +92,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                       children: [
                         const Text('營業時間',
                             style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop['time']!,
+                        Text(selectedShop.time,
                             style: const TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -193,7 +111,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                       children: [
                         const Text('地址',
                             style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop['address']!,
+                        Text(selectedShop.address,
                             style: const TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -212,7 +130,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                       children: [
                         const Text('電話',
                             style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop['phone']!,
+                        Text(selectedShop.phone,
                             style: const TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -225,7 +143,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                     style: TextStyle(fontSize: 14, color: Colors.grey)),
                 const SizedBox(height: 4),
                 Text(
-                  selectedShop['description']!,
+                  selectedShop.description,
                   style: const TextStyle(fontSize: 16, height: 1.6),
                 ),
               ],
