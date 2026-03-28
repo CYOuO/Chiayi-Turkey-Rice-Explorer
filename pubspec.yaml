@@ -53,7 +53,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/flutter.png
-    - assets/home_background.JPG
+    - assets/home_background.jpg
     - assets/01minzu.jpg
     - assets/02pensuei.jpg
     - assets/03kuaiting.jpg
@@ -64,6 +64,8 @@ flutter:
     - assets/08king.jpg
     - assets/09lou.jpg
     - assets/10tong.jpg
+    - assets/11guoZong.jpg
+    - assets/
   fonts:
     - family: TWSung
       fonts:
