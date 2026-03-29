@@ -91,6 +91,9 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
           Color.fromARGB(255, 254, 243, 243), // 下拉選單背景色
         ),
         elevation: WidgetStatePropertyAll(6),
+        maximumSize: WidgetStatePropertyAll(
+          Size(double.infinity, 300), // 限制選單最高 300
+        ),
       ),
       enableFilter: true,
       requestFocusOnTap: true,
