@@ -15,8 +15,8 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
   late Restaurant selectedShop;
   int _currentImageIndex = 0;
   late PageController _pageController;
-  List<Restaurant> filteredRestaurants = []; // 搜尋用：用於搜尋過濾的店家列表
-  final searchController = TextEditingController(); // 搜尋用：搜尋框控制器
+  List<Restaurant> filteredRestaurants = []; // 搜尋用：用於過濾的店家列表
+  String _selectedFilter = '全部'; // 新增篩選狀態
   @override
   void initState() {
     super.initState();
@@ -25,15 +25,44 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
     _pageController = PageController();
   }
 
-  void _search() {
-    // 搜尋用：根據搜尋框內容過濾店家列表
+  void _applyFilter() {
+    final Map<String, String> dayMap = {
+      '星期一': '週一',
+      '星期二': '週二',
+      '星期三': '週三',
+      '星期四': '週四',
+      '星期五': '週五',
+      '星期六': '週六',
+      '星期日': '週日',
+    };
+    bool _isClosedOn(String time, String dayKeyword) {
+      // 找到「公休」前面的那段文字，例如「週二、三、四」
+      final regex = RegExp(r'[（(]([^）)]+公休)[）)]');
+      final match = regex.firstMatch(time);
+      if (match == null) return false;
+
+      final closedSection = match.group(1)!; // 例如「週二、三、四公休」
+
+      // 把「週X」拆開來比對
+      // dayKeyword 例如「週四」
+      final shortDay = dayKeyword.replaceAll('週', ''); // 變成「四」
+
+      // 檢查是否包含完整的「週四」或縮寫「四」（在頓號分隔的情況）
+      return closedSection.contains('週$shortDay') ||
+          closedSection.contains('、$shortDay') ||
+          closedSection.contains('週$shortDay、') ||
+          RegExp('週[一二三四五六日、]*${shortDay}[、公]').hasMatch(closedSection);
+    }
+
     setState(() {
-      final keyword = searchController.text;
-      if (keyword.isEmpty) {
+      if (_selectedFilter == '全部') {
         filteredRestaurants = restaurants;
       } else {
-        filteredRestaurants =
-            restaurants.where((shop) => shop.name.contains(keyword)).toList();
+        final closedKeyword = dayMap[_selectedFilter]!;
+        // 公休日包含該關鍵字的排除掉
+        filteredRestaurants = restaurants
+            .where((shop) => !_isClosedOn(shop.time, closedKeyword))
+            .toList();
       }
     });
   }
@@ -54,36 +83,39 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       ),
       actions: [
         // 搜尋用：搜尋框
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: SizedBox(
-            width: 180,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: '搜尋...',
-                      hintStyle: TextStyle(color: Colors.white60),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white60),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onSelected: (String value) {
+            setState(() {
+              _selectedFilter = value;
+              _applyFilter();
+            });
+          },
+          itemBuilder: (context) => [
+            '全部',
+            '星期一',
+            '星期二',
+            '星期三',
+            '星期四',
+            '星期五',
+            '星期六',
+            '星期日',
+          ]
+              .map((label) => PopupMenuItem(
+                    value: label,
+                    child: Row(
+                      children: [
+                        if (_selectedFilter == label)
+                          const Icon(Icons.check,
+                              size: 18, color: Color.fromARGB(255, 97, 10, 4))
+                        else
+                          const SizedBox(width: 18),
+                        const SizedBox(width: 8),
+                        Text(label),
+                      ],
                     ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: _search, // ← 按 icon 才搜尋
-                  child: const Icon(Icons.search, color: Colors.white70),
-                ),
-              ],
-            ),
-          ),
+                  ))
+              .toList(),
         ),
         const SizedBox(width: 8),
       ],
@@ -200,24 +232,23 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 店名
-                // 店名
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end, // ← 改成 end 讓底部對齊
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       selectedShop.name,
                       style: const TextStyle(
-                        fontSize: 22, // ← 從20放大
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 97, 10, 4), // ← 加深咖啡色
+                        color: Color.fromARGB(255, 54, 13, 13),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(30, 97, 10, 4), // 淡紅底
+                        color: const Color.fromARGB(30, 97, 10, 4),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
