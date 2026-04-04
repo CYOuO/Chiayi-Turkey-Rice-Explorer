@@ -107,8 +107,25 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
         return DropdownMenuEntry<Restaurant>(
           value: shop,
           label: shop.name,
+          leadingIcon: const Icon(Icons.restaurant, color: Colors.grey),
+          labelWidget: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(shop.name, style: const TextStyle(fontSize: 15)),
+              Text(shop.address,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            ],
+          ),
         );
       }).toList(),
+      filterCallback: (entries, filter) {
+        return entries
+            .where((entry) =>
+                entry.label.contains(filter) ||
+                entry.value.address.contains(filter))
+            .toList();
+      },
       onSelected: (Restaurant? value) {
         if (!mounted) return;
         setState(() {
