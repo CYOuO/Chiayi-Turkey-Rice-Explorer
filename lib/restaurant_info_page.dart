@@ -175,7 +175,6 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 原本的 Image.asset 整段換掉
           AspectRatio(
             aspectRatio: 4 / 3,
             child: Stack(

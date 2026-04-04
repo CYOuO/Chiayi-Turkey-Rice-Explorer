@@ -7,7 +7,6 @@ class Restaurant {
   final String description;
   final String phone;
   final String price;
-  
 
   Restaurant({
     required this.id,
@@ -265,7 +264,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '25',
     name: '正統火雞肉飯',
-    images: ['assets/25zeng_(0).jpg','assets/25zeng_(1).jpg','assets/25zeng_(2).jpg'],
+    images: ['assets/25zheng_(0).jpg','assets/25zheng_(1).jpg','assets/25zheng_(2).jpg'],
     address: '嘉義市東區大雅路二段591號',
     time: '08:00-13:50,16:30-19:30(週一公休)',
     description: 'google評價4.6顆星，內用外帶都好吃，CP值高。',
