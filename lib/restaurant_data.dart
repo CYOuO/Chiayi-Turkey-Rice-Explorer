@@ -1,7 +1,7 @@
 class Restaurant {
   final String id;
   final String name;
-  final String image;
+  final List<String> images;
   final String address;
   final String time;
   final String description;
@@ -11,7 +11,7 @@ class Restaurant {
   Restaurant({
     required this.id,
     required this.name,
-    required this.image,
+    required this.images,
     required this.address,
     required this.time,
     required this.description,
@@ -24,7 +24,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '1',
     name: '民主雞肉飯',
-    image: 'assets/01minzu.jpg',
+    images: ['assets/01minzu_(0).jpg','assets/01minzu_(1).jpg','assets/01minzu_(2).jpg'],
     address: '嘉義市東區民族路149號',
     time: '10:00–20:40',
     description: '假日常常大排長龍的店，但翻桌率很高。\n這家店的火雞肉飯口味獨特，深受當地人喜愛。\n有專屬停車場。',
@@ -34,7 +34,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '2',
     name: '噴水雞肉飯-小雅旗艦店',
-    image: 'assets/02pensuei.jpg',
+    images: ['assets/02pensuei_(0).jpg', 'assets/02pensuei_(1).jpg','assets/02pensuei_(2).jpg'],
     address: '嘉義市東區小雅路382號',
     time: '10:30–20:00',
     description: '著名觀光店，但其實非在地人首選。\n有專屬停車場。',
@@ -44,7 +44,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '3',
     name: '檜町雞肉飯',
-    image: 'assets/03kuaiting.jpg',
+    images: ['assets/03kuaiting_(0).jpg','assets/03kuaiting_(1).jpg','assets/03kuaiting_(2).jpg'],
     address: '嘉義市東區吳鳳北路101號',
     time: '11:00-15:00,17:00-20:00(週二、三、四公休)',
     description: '裝潢小文青，環境舒適，有焗烤雞肉飯很獨特。',
@@ -54,7 +54,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '4',
     name: '阿宏師火雞肉飯-宵夜幫吳鳳店',
-    image: 'assets/04hong.jpg',
+    images: ['assets/04hong_(0).jpg','assets/04hong_(1).jpg','assets/04hong_(2).jpg'],
     address: '嘉義市東區吳鳳北路127號',
     time: '16:30–23:00',
     description: '在in89影城附近，宵夜好選擇，排隊比總店少一點。',
@@ -64,7 +64,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '5',
     name: '嘉義體育館姊妹火雞肉飯',
-    image: 'assets/05sister.jpg',
+    images: ['assets/05sister_(0).jpg','assets/05sister_(1).jpg','assets/05sister_(2).jpg'],
     address: '嘉義市東區垂楊路1號',
     time: '06:00-14:00(週三公休)',
     description: '創業於西元1987年，是許多嘉義人從小吃到大的老店。',
@@ -74,7 +74,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '6',
     name: '嘉義人火雞肉飯',
-    image: 'assets/06cy.jpg',
+    images: ['assets/06cy_(0).jpg','assets/06cy_(1).jpg','assets/06cy_(2).jpg'],
     address: '嘉義市東區垂楊路157號',
     time: '05:30–14:00',
     description: '早期是無名路邊攤起家，經營多年的老店。\n用餐時間人潮不斷，外面大馬路好停車。',
@@ -84,7 +84,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '7',
     name: '陳家美食火雞肉飯',
-    image: 'assets/07chen.jpg',
+    images: ['assets/07chen_(0).jpg','assets/07chen_(1).jpg','assets/07chen_(2).jpg'],
     address: '嘉義市西區民族路633號',
     time: '11:00–04:00(週四公休)',
     description: '內用是拋棄式碗筷，評價不高，是某些人的一次店。',
@@ -94,7 +94,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '8',
     name: '圓環火雞大王火雞肉飯',
-    image: 'assets/08king.jpg',
+    images: ['assets/08king_(0).jpg','assets/08king_(1).jpg','assets/08king_(2).jpg'],
     address: '嘉義市東區民族路108號',
     time: '10:30–21:00',
     description: '評價感覺中規中矩，路邊有付費停車場。',
@@ -104,7 +104,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '9',
     name: '阿樓師火雞肉飯',
-    image: 'assets/09lou.jpg',
+    images: ['assets/09lou_(0).jpg','assets/09lou_(1).jpg','assets/09lou_(2).jpg'],
     address: '嘉義市東區吳鳳北路102號',
     time: '16:00–00:00',
     description: '人氣美食須排隊，附近也有超大停車場。',
@@ -114,7 +114,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '10',
     name: '大同火雞肉飯',
-    image: 'assets/10tong.jpg',
+    images: ['assets/10tong_(0).jpg','assets/10tong_(1).jpg','assets/10tong_(2).jpg'],
     address: '嘉義市東區民族路113號',
     time: '10:00–16:00(週二公休)',
     description: '飯粒粒分明，太晚到會蛋就沒有了，且是全熟蛋。',
@@ -124,7 +124,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '11',
     name: '郭家雞肉飯-中正店',
-    image: 'assets/11guoZong.jpg',
+    images: ['assets/11guoZong_(0).jpg','assets/11guoZong_(1).jpg','assets/11guoZong_(2).jpg'],
     address: '嘉義市西區中正路368號',
     time: '09:30–20:00(週三公休)',
     description: '是第四代經營，Google評價4顆星，環境明亮，湯料豐富。',
@@ -134,7 +134,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '12',
     name: '東門雞肉飯-新民店',
-    image: 'assets/12dongXin.jpg',
+    images: ['assets/12dongXin_(0).jpg','assets/12dongXin_(1).jpg','assets/12dongXin_(2).jpg'],
     address: '嘉義市西區新民路846號',
     time: '10:00–20:30',
     description: '位於垂楊國小附近，附近有飯店，Google評價4顆星，環境明亮，沾醬是美乃滋，沒有黃蘿蔔片。',
@@ -144,7 +144,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '13',
     name: '頂軒火雞肉飯',
-    image: 'assets/13ding.jpg',
+    images: ['assets/13ding_(0).jpg','assets/13ding_(1).jpg','assets/13ding_(2).jpg'],
     address: '嘉義市東區公明路265號',
     time: '10:00-19:30(週日公休)',
     description: 'google評價3.7顆星，味道似乎較沒有記憶點，但不太需要排隊，不想排隊可以吃看看。',
@@ -154,7 +154,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '14',
     name: '郭家美食店',
-    image: 'assets/14guoDaya.jpg',
+    images: ['assets/14guoDaya_(0).jpg','assets/14guoDaya_(1).jpg','assets/14guoDaya_(2).jpg'],
     address: '嘉義市東區大雅路二段384號',
     time: '10:00-18:30',
     description: 'google評價3.9顆星，從郭家火雞肉飯店分家，店前方可以路邊停車，湯頭似乎不錯。',
@@ -164,7 +164,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '15',
     name: '阿宏師火雞肉飯-光華總店',
-    image: 'assets/15hongGuan.jpg',
+    images: ['assets/15hongGuan_(0).jpg','assets/15hongGuan_(1).jpg','assets/15hongGuan_(2).jpg'],
     address: '嘉義市東區光華路108號',
     time: '每天10:30–20:00',
     description: '假日時期常大排長龍，多外地人，且不好停車。',
@@ -174,7 +174,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '16',
     name: '東門雞肉飯-和平店',
-    image: 'assets/16dongHe.jpg',
+    images: ['assets/16dongHe_(0).jpg','assets/16dongHe_(1).jpg','assets/16dongHe_(2).jpg'],
     address: '嘉義市東區光彩街198號',
     time: '05:00-20:30',
     description: '鄰近東市場，Google評價4顆星，在嘉義比較不突出，整體中規中矩，會開發票。',
@@ -184,7 +184,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '17',
     name: '興安火雞肉飯',
-    image: 'assets/17xing.jpg',
+    images: ['assets/17xing_(0).jpg','assets/17xing_(1).jpg','assets/17xing_(2).jpg'],
     address: '嘉義市東區興美六路一號',
     time: '10:30-19:30',
     description: '位於興安國小對面，google評價4.2顆星，停車方便',
@@ -194,7 +194,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '18',
     name: '和平火雞肉飯',
-    image: 'assets/18heping.jpg',
+    images: ['assets/18heping_(0).jpg','assets/18heping_(1).jpg','assets/18heping_(2).jpg'],
     address: '嘉義市東區和平路107號',
     time: '07:30-17:00',
     description: 'google評價4.2顆星，內用環境擁擠，可能有點熱，需要排隊，要油蔥酥要主動說，雞油很香。',
@@ -203,18 +203,18 @@ final List<Restaurant> restaurants = [
   ),
   Restaurant(
     id: '19',
-    name: '曾家火雞肉飯',
-    image: 'assets/19zeng.jpg',
-    address: '嘉義縣中埔鄉中山路五段944號',
-    time: '05:30-13:15(週四公休)',
-    description: 'google評價4.1顆星，飯是濕潤的，環境比較老舊。',
-    phone: '05-230-2120',
+    name: '簡單火雞肉飯',
+    images: ['assets/19jianDan_(0).jpg','assets/19jianDan_(1).jpg','assets/19jianDan_(2).jpg'],
+    address: '嘉義市東區大雅路二段581號',
+    time: '08:30-20:00(週二公休)',
+    description: 'google評價4.2顆星，味道適中，豬肝沒有腥味。',
+    phone: '05-275-4563',
     price: '\$ 1-200',
   ),
   Restaurant(
     id: '20',
     name: '陽光雞肉飯',
-    image: 'assets/20sun.jpg',
+    images: ['assets/20sun_(0).jpg','assets/20sun_(1).jpg','assets/20sun_(2).jpg'],
     address: '嘉義市東區學府路300號',
     time: '11:00-19:00',
     description: '位於嘉義大學蘭潭校區美食街，因位於學校，怎麼停都有位置。',
@@ -224,7 +224,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '21',
     name: '三雅火雞肉飯',
-    image: 'assets/21yai.jpg',
+    images: ['assets/21yai_(0).jpg','assets/21yai_(1).jpg','assets/21yai_(2).jpg'],
     address: '嘉義市西區仁愛路576-1號',
     time: '09:00-20:30(週四公休)',
     description: '位於嘉義火車站對面，是50老店。有二樓，出餐快，不會太油。',
@@ -234,7 +234,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '22',
     name: '噴水雞肉飯-中山店',
-    image: 'assets/22penYuan.jpg',
+    images: ['assets/22penYuan_(0).jpg','assets/22penYuan_(1).jpg','assets/22penYuan_(2).jpg'],
     address: '嘉義市西區中山路325號',
     time: '10:00-21:00',
     description: '是噴水雞肉飯總店，比較小間擁擠，位於圓環附近，較不好停車。一顆星評價比五顆星多。',
@@ -244,7 +244,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '23',
     name: '阿宏師火雞肉飯-中埔鄉中山店',
-    image: 'assets/23hongZong.jpg',
+    images: ['assets/23hongZong_(0).jpg','assets/23hongZong_(1).jpg','assets/23hongZong_(2).jpg'],
     address: '嘉義縣中埔鄉中山路五段943-5號',
     time: '10:30-20:00',
     description: 'google評價3.9顆星，蔡阿嘎似乎推薦過，店內空間不大，火雞肉飯算香。',
@@ -254,7 +254,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '24',
     name: '郭家雞肉飯-文化店',
-    image: 'assets/24guoWen.jpg',
+    images: ['assets/24guoWen_(0).jpg','assets/24guoWen_(1).jpg','assets/24guoWen_(2).jpg'],
     address: '嘉義市東區文化路148號',
     time: '10:00-04:00',
     description: 'google評價3.4顆星，位於文化路夜市，營業時間很長，生意也很好，翻桌率高。',
@@ -264,7 +264,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '25',
     name: '正統火雞肉飯',
-    image: 'assets/25zeng.jpg',
+    images: ['assets/25zeng_(0).jpg','assets/25zeng_(1).jpg','assets/25zeng_(2).jpg'],
     address: '嘉義市東區大雅路二段591號',
     time: '08:00-13:50,16:30-19:30(週一公休)',
     description: 'google評價4.6顆星，內用外帶都好吃，CP值高。',
@@ -274,7 +274,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '26',
     name: '車頭火雞肉飯',
-    image: 'assets/26che.jpg',
+    images: ['assets/26che_(0).jpg','assets/26che_(1).jpg','assets/26che_(2).jpg'],
     address: '嘉義市西區中正路707號',
     time: '10:00-20:30(週三公休)',
     description: 'google評價4.3顆星，有二樓還可以看街景，雞肉份量給的蠻多的。',
@@ -284,7 +284,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '27',
     name: '阿霞-二代店',
-    image: 'assets/27xia2.jpg',
+    images: ['assets/27xia2_(0).jpg','assets/27xia2_(1).jpg','assets/27xia2_(2).jpg'],
     address: '嘉義市西區中正路479號',
     time: '平日16:00-22:00,假日11:30-21:30',
     description: 'google評價4.1顆星，附近有停車場，裝潢文青明亮，感受得到是用心經營的店。',
@@ -294,7 +294,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '28',
     name: '噴水雞肉飯-新民店',
-    image: 'assets/28penXin.jpg',
+    images: ['assets/28penXin_(0).jpg','assets/28penXin_(1).jpg','assets/28penXin_(2).jpg'],
     address: '嘉義市西區新民路880號',
     time: '09:30-20:00',
     description: 'google評價3.3顆星，許多評論認為價格偏貴，環境衛生也有些許問題。',
@@ -304,7 +304,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '29',
     name: '阿德師火雞肉飯',
-    image: 'assets/29ade.jpg',
+    images: ['assets/29ade_(0).jpg','assets/29ade_(1).jpg','assets/29ade_(2).jpg'],
     address: '嘉義市西區建成街42號',
     time: '10:30–20:00(週一公休)',
     description: 'google評價4.5顆星，環境老舊，老闆親切有人情味，用料實在。',
@@ -314,7 +314,7 @@ final List<Restaurant> restaurants = [
   Restaurant(
     id: '30',
     name: '阿信美食',
-    image: 'assets/30xin.jpg',
+    images: ['assets/30xin_(0).jpg','assets/30xin_(1).jpg','assets/30xin_(2).jpg'],
     address: '嘉義市西區中正路426號',
     time: '22:00-03:30',
     description: 'google評價4顆星，雖開在深夜，但生意依舊蠻好的，算是嘉義有名宵夜，CP值高。',

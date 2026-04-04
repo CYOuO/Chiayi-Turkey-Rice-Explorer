@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'restaurant_data.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class RestaurantInfoPage extends StatefulWidget {
   const RestaurantInfoPage({Key? key}) : super(key: key);
@@ -10,6 +12,8 @@ class RestaurantInfoPage extends StatefulWidget {
 
 class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
   late Restaurant selectedShop;
+  int _currentImageIndex = 0;
+  late PageController _pageController;
   List<Restaurant> filteredRestaurants = []; // 搜尋用：用於搜尋過濾的店家列表
   final searchController = TextEditingController(); // 搜尋用：搜尋框控制器
   @override
@@ -17,6 +21,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
     super.initState();
     selectedShop = restaurants[0]; // 預設選第一間
     filteredRestaurants = restaurants; // 搜尋用：預設搜尋結果為全部店家
+    _pageController = PageController();
   }
 
   void _search() {
@@ -107,7 +112,11 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       onSelected: (Restaurant? value) {
         if (!mounted) return;
         setState(() {
-          if (value != null) selectedShop = value;
+          if (value != null) {
+            selectedShop = value;
+            _currentImageIndex = 0;
+            _pageController.jumpToPage(0);
+          }
         });
       },
     );
@@ -116,11 +125,56 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            selectedShop.image,
-            width: double.infinity,
-            height: 300,
-            fit: BoxFit.cover,
+          // 原本的 Image.asset 整段換掉
+          AspectRatio(
+            aspectRatio: 4 / 3,
+            child: Stack(
+              children: [
+                PhotoViewGallery.builder(
+                  pageController: _pageController,
+                  itemCount: selectedShop.images.length,
+                  builder: (context, index) {
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: AssetImage(selectedShop.images[index]),
+                      initialScale: PhotoViewComputedScale.covered,
+                      minScale: PhotoViewComputedScale.covered,
+                      maxScale: PhotoViewComputedScale.covered,
+                    );
+                  },
+                  backgroundDecoration:
+                      const BoxDecoration(color: Colors.black),
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentImageIndex = index;
+                    });
+                  },
+                ),
+                // 圓點指示
+                Positioned(
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      selectedShop.images.length,
+                      (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: _currentImageIndex == index ? 12 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: _currentImageIndex == index
+                              ? Colors.white
+                              : Colors.white54,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
