@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'restaurant_data.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RestaurantInfoPage extends StatefulWidget {
   const RestaurantInfoPage({Key? key}) : super(key: key);
@@ -93,7 +94,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       label: const Text('請選擇店家'),
       menuStyle: const MenuStyle(
         backgroundColor: WidgetStatePropertyAll(
-          Color.fromARGB(255, 254, 243, 243), // 下拉選單背景色
+          const Color.fromARGB(255, 255, 248, 240), // 下拉選單背景色
         ),
         elevation: WidgetStatePropertyAll(6),
         maximumSize: WidgetStatePropertyAll(
@@ -199,20 +200,33 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 店名
+                // 店名
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end, // ← 改成 end 讓底部對齊
                   children: [
                     Text(
                       selectedShop.name,
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                        fontSize: 22, // ← 從20放大
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 97, 10, 4), // ← 加深咖啡色
+                      ),
                     ),
-                    Text(
-                      selectedShop.price,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey, //
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(30, 97, 10, 4), // 淡紅底
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        selectedShop.price,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color.fromARGB(255, 97, 10, 4), // 深紅字
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -220,72 +234,126 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                 const SizedBox(height: 4),
                 const Divider(),
                 const SizedBox(height: 8),
-                // 營業時間
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.access_time,
-                        color: Color.fromARGB(255, 97, 10, 4), size: 20),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('營業時間',
-                            style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop.time,
-                            style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // 地址
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.location_on,
-                        color: Color.fromARGB(255, 97, 10, 4), size: 20),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('地址',
-                            style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop.address,
-                            style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // 電話
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.phone,
-                        color: Color.fromARGB(255, 97, 10, 4), size: 20),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('電話',
-                            style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        Text(selectedShop.phone,
-                            style: const TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(height: 24),
-                // 介紹
+                if (_currentImageIndex != 2) ...[
+                  // 營業時間
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.access_time,
+                          color: Color.fromARGB(255, 97, 10, 4), size: 20),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('營業時間',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text(selectedShop.time,
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // 地址
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.location_on,
+                          color: Color.fromARGB(255, 97, 10, 4), size: 20),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('地址',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text(selectedShop.address,
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // 電話
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.phone,
+                          color: Color.fromARGB(255, 97, 10, 4), size: 20),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('電話',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text(selectedShop.phone,
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 24),
+                  // 介紹
 
-                const Text('介紹',
-                    style: TextStyle(fontSize: 14, color: Colors.grey)),
-                const SizedBox(height: 4),
-                Text(
-                  selectedShop.description,
-                  style: const TextStyle(fontSize: 16, height: 1.6),
-                ),
+                  const Text('介紹',
+                      style: TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Text(
+                    selectedShop.description,
+                    style: const TextStyle(fontSize: 16, height: 1.6),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 0),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 255, 248, 240),
+                      //borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 210, 170, 120),
+                          width: 1.5),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text('🦃', style: TextStyle(fontSize: 48)),
+                        const SizedBox(height: 12),
+                        Text(
+                          '出發去 ${selectedShop.name}！',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 97, 10, 4),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () => launchUrl(
+                              Uri.parse(
+                                  'https://maps.google.com/?q=${selectedShop.address}'),
+                            ),
+                            icon: const Icon(Icons.map),
+                            label: const Text('在 Google Maps 開啟'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 97, 10, 4),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

@@ -7,6 +7,7 @@ class Restaurant {
   final String description;
   final String phone;
   final String price;
+  
 
   Restaurant({
     required this.id,
