@@ -316,7 +316,7 @@ final List<Restaurant> restaurants = [
     name: '阿信美食',
     images: ['assets/30xin_(0).jpg','assets/30xin_(1).jpg','assets/30xin_(2).jpg'],
     address: '嘉義市西區中正路426號',
-    time: '22:00-03:30',
+    time: '22:00-04:30',
     description: 'google評價4顆星，雖開在深夜，但生意依舊蠻好的，算是嘉義有名宵夜，CP值高。',
     phone: '05-229-3925',
     price: '\$ 1-200',

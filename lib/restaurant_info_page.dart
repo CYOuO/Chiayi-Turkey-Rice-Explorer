@@ -3,6 +3,57 @@ import 'restaurant_data.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'image_overview_page.dart';
+
+// 判斷是否在時間段內（支援跨午夜，例如 22:00–03:30）
+bool _inTimeRange(int nowMin, String start, String end) {
+  final sp = start.split(':');
+  final ep = end.split(':');
+  final s = int.parse(sp[0]) * 60 + int.parse(sp[1]);
+  final e = int.parse(ep[0]) * 60 + int.parse(ep[1]);
+  if (e < s) return nowMin >= s || nowMin < e; // 跨午夜
+  return nowMin >= s && nowMin < e;
+}
+
+bool isOpenNow(String time) {
+  final now = DateTime.now();
+  final weekdayShort = ['一', '二', '三', '四', '五', '六', '日'][now.weekday - 1];
+
+  // 檢查今天是否公休
+  final closed = RegExp(r'[（(]([^）)]*公休)[）)]').firstMatch(time);
+  if (closed != null) {
+    final s = closed.group(1)!;
+    if (s.contains('週$weekdayShort') ||
+        s.contains('、$weekdayShort') ||
+        RegExp('週[一二三四五六日、]*${weekdayShort}[、公]').hasMatch(s)) {
+      return false;
+    }
+  }
+
+  final nowMin = now.hour * 60 + now.minute;
+  String clean = time
+      .replaceAll(RegExp(r'[（(][^）)]*公休[）)]'), '')
+      .replaceAll('每天', '')
+      .trim();
+
+  // 處理「平日 xx:xx–xx:xx,假日 xx:xx–xx:xx」格式
+  if (clean.contains('平日') || clean.contains('假日')) {
+    final isWeekend = now.weekday >= 6;
+    final keyword = isWeekend ? '假日' : '平日';
+    final m = RegExp('$keyword(\\d{2}:\\d{2})[–\\-](\\d{2}:\\d{2})')
+        .firstMatch(clean);
+    if (m == null) return false;
+    return _inTimeRange(nowMin, m.group(1)!, m.group(2)!);
+  }
+
+  // 一般時段（可能多段，以逗號分隔，例如 11:00-15:00,17:00-20:00）
+  for (final seg in clean.split(',')) {
+    final m = RegExp(r'(\d{2}:\d{2})[–\-](\d{2}:\d{2})').firstMatch(seg);
+    if (m != null && _inTimeRange(nowMin, m.group(1)!, m.group(2)!))
+      return true;
+  }
+  return false;
+}
 
 class RestaurantInfoPage extends StatefulWidget {
   const RestaurantInfoPage({Key? key}) : super(key: key);
@@ -17,6 +68,8 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
   late PageController _pageController;
   List<Restaurant> filteredRestaurants = []; // 搜尋用：用於過濾的店家列表
   String _selectedFilter = '全部'; // 新增篩選狀態
+  final TextEditingController _dropdownSearchController =
+      TextEditingController(); // 搜尋框控制器
   @override
   void initState() {
     super.initState();
@@ -85,6 +138,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
         // 搜尋用：搜尋框
         PopupMenuButton<String>(
           icon: const Icon(Icons.menu, color: Colors.white),
+          color: const Color.fromARGB(255, 255, 248, 240), // 選單背景色
           onSelected: (String value) {
             setState(() {
               _selectedFilter = value;
@@ -121,55 +175,66 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
       ],
     );
 
-    var dropdownMenu = DropdownMenu<Restaurant>(
-      expandedInsets: EdgeInsets.zero, // 讓選單寬度撐滿
-      label: const Text('請選擇店家'),
-      menuStyle: const MenuStyle(
-        backgroundColor: WidgetStatePropertyAll(
-          const Color.fromARGB(255, 255, 248, 240), // 下拉選單背景色
+    var dropdownMenu = Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary:
+                    const Color.fromARGB(255, 97, 10, 4), // 把點擊時的紫色，局部替換成您的深紅色
+              ),
         ),
-        elevation: WidgetStatePropertyAll(6),
-        maximumSize: WidgetStatePropertyAll(
-          Size(double.infinity, 300), // 限制選單最高 300
-        ),
-      ),
-      enableFilter: true,
-      requestFocusOnTap: true,
-      dropdownMenuEntries: filteredRestaurants.map((shop) {
-        // 搜尋用：restaurants 改成 filteredRestaurants
-        return DropdownMenuEntry<Restaurant>(
-          value: shop,
-          label: shop.name,
-          leadingIcon: const Icon(Icons.restaurant, color: Colors.grey),
-          labelWidget: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(shop.name, style: const TextStyle(fontSize: 15)),
-              Text(shop.address,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            ],
+        child: DropdownMenu<Restaurant>(
+          controller: _dropdownSearchController,
+          expandedInsets: EdgeInsets.zero, // 讓選單寬度撐滿
+          label:
+              const Text('請選擇店家', style: TextStyle(color: Color(0xFF8A7366))),
+          menuStyle: const MenuStyle(
+            backgroundColor: WidgetStatePropertyAll(
+              Color.fromARGB(255, 255, 248, 240), // 下拉選單背景色
+            ),
+            elevation: WidgetStatePropertyAll(6),
+            maximumSize: WidgetStatePropertyAll(
+              Size(double.infinity, 300), // 限制選單最高 300
+            ),
           ),
-        );
-      }).toList(),
-      filterCallback: (entries, filter) {
-        return entries
-            .where((entry) =>
-                entry.label.contains(filter) ||
-                entry.value.address.contains(filter))
-            .toList();
-      },
-      onSelected: (Restaurant? value) {
-        if (!mounted) return;
-        setState(() {
-          if (value != null) {
-            selectedShop = value;
-            _currentImageIndex = 0;
-            _pageController.jumpToPage(0);
-          }
-        });
-      },
-    );
+          enableFilter: true,
+          requestFocusOnTap: true,
+          dropdownMenuEntries: filteredRestaurants.map((shop) {
+            // 搜尋用： filteredRestaurants
+            return DropdownMenuEntry<Restaurant>(
+              value: shop,
+              label: shop.name,
+              leadingIcon:
+                  const Icon(Icons.restaurant, color: Color(0xFF8A7366)),
+              labelWidget: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(shop.name, style: const TextStyle(fontSize: 15)),
+                  Text(shop.address,
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xFF8A7366))),
+                ],
+              ),
+            );
+          }).toList(),
+          filterCallback: (entries, filter) {
+            return entries
+                .where((entry) =>
+                    entry.label.contains(filter) ||
+                    entry.value.address.contains(filter))
+                .toList();
+          },
+          onSelected: (Restaurant? value) {
+            if (!mounted) return;
+            setState(() {
+              if (value != null) {
+                selectedShop = value;
+                _currentImageIndex = 0;
+                _pageController.jumpToPage(0);
+              }
+            });
+          },
+        ));
 
     var restaurantInfo = SingleChildScrollView(
       child: Column(
@@ -197,6 +262,57 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                       _currentImageIndex = index;
                     });
                   },
+                ),
+                // 所有圖片按鈕
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: GestureDetector( 
+                    onTap: () async {
+                      final result = await Navigator.push<Restaurant>(
+                        context,
+                        MaterialPageRoute(
+                          // 跳轉到圖片總覽頁
+                          builder: (_) => ImageOverviewPage(
+                            restaurant: selectedShop,// 傳入目前店家資料
+                          ),
+                        ),
+                      );
+                      // 若在 Overview 換了店家，回來時同步更新
+                      if (result != null && mounted) {
+                        setState(() {
+                          selectedShop = result;
+                          _currentImageIndex = 0;
+                          _pageController.jumpToPage(0);
+                          _dropdownSearchController.text = result.name;
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 11, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(170, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white30, width: 0.8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.grid_view, color: Colors.white, size: 14),
+                          SizedBox(width: 5),
+                          Text(
+                            '所有圖片',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
                 // 圓點指示
                 Positioned(
@@ -232,33 +348,61 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
               children: [
                 // 店名
                 Row(
+                  // 店名 + 營業狀態
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      selectedShop.name,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 54, 13, 13),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(30, 97, 10, 4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                    Expanded(
                       child: Text(
-                        selectedShop.price,
+                        selectedShop.name,
                         style: const TextStyle(
-                          fontSize: 13,
-                          color: Color.fromARGB(255, 97, 10, 4), // 深紅字
-                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 54, 13, 13),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Builder(builder: (_) {
+                      // 營業狀態
+                      final open = isOpenNow(selectedShop.time);
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 5),
+                        decoration: BoxDecoration(
+                          color:
+                              open ? Colors.green.shade50 : Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: open
+                                ? Colors.green.shade300
+                                : Colors.red.shade300,
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.circle,
+                                size: 7,
+                                color: open
+                                    ? Colors.green.shade600
+                                    : Colors.red.shade600),
+                            const SizedBox(width: 4),
+                            Text(
+                              open ? '營業中' : '已打烊',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: open
+                                    ? Colors.green.shade700
+                                    : Colors.red.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -276,8 +420,8 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('營業時間',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF8A7366))),
                           Text(selectedShop.time,
                               style: const TextStyle(fontSize: 16)),
                         ],
@@ -296,8 +440,8 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('地址',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF8A7366))),
                           Text(selectedShop.address,
                               style: const TextStyle(fontSize: 16)),
                         ],
@@ -316,8 +460,8 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('電話',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey)),
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF8A7366))),
                           Text(selectedShop.phone,
                               style: const TextStyle(fontSize: 16)),
                         ],
@@ -328,7 +472,7 @@ class _RestaurantInfoPageState extends State<RestaurantInfoPage> {
                   // 介紹
 
                   const Text('介紹',
-                      style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      style: TextStyle(fontSize: 14, color: Color(0xFF8A7366))),
                   const SizedBox(height: 4),
                   Text(
                     selectedShop.description,
